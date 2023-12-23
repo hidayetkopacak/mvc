@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+    <title>Title</title>
+    
+    <link rel="stylesheet" th:href="@{/style.css}" />
+
+</head>
+
+<body>
+  <div class="container-lg">
+
+
+        <div class="card">
+          <div th:if="${not admin}" class="card-header text-center">
+            <h3>List Of Currencies</h3>
+          </div>
+            <div th:if="${admin}" class="card-header text-center admin-card-header">
+            <h3>[Admin] List Of Currencies</h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead class="bg-dark text-white">
+                <tr>
+                  <th>ID</th>
+                  <th>Currency Name</th>
+                  <th>Currency Code</th>
+                  <th>TL</th>
+                  <th th:if="${admin}">Edit/Delete/Convert/Chart</th>
+                  <th th:if="${not admin}">Convert/Chart</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="ob:${list}">
+                  <td th:text=${ob.id}></td>
+                  <td th:text=${ob.currencyName}></td>
+                  <td th:text=${ob.currencyCode}></td>
+                  <td th:text=${ob.exchangeRangeTL}></td>
+                  <td>
+                     <a th:if="${admin}" th:href="@{/exchangerates/delete(id=${ob.id})}" class="btn btn-danger btn-sm">DELETE <i class="fa fa-trash-o" aria-hidden="true"></i></a>
+            <a th:if="${admin}" th:href="@{/exchangerates/edit(id=${ob.id})}" class="btn btn-warning btn-sm">EDIT <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                    <a th:href="@{/exchangerates/convert(id=${ob.id})}" class="btn btn-success btn-sm">CONVERT <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                    <a th:href="@{/exchangerates/chart(id=${ob.id})}" class="btn btn-info btn-sm" th:classappend="${admin} ? 'chart-button' : ''">CHART <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <a th:if="${admin}" th:href="@{/exchangerates/register}" class="btn btn-success btn-sm">Add Currency <i class="fa fa-plus-square" aria-hidden="true"></i></a> 
+            <a th:href="@{/exchangerates/}" class="btn btn-primary btn-sm">Go to Home</a>
+            <a th:if="${not admin}" th:href="@{/exchangerates/adminLogin}" class="btn btn-success btn-sm">Admin Login</a>
+            <a th:if="${admin}" th:href="@{/exchangerates/adminLogut}" class="btn btn-danger btn-sm">Admin Logout</a>
+          </div>
+          <div class="card-footer">
+              <div th:if="${message!=null}"  class="card-footer bg-white text-info">
+				<span th:text="${message}"></span>
+			</div>
+          </div>
+        </div>
+      
+
+
+  </div>
+</body>
+</html>

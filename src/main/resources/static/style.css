@@ -1,0 +1,39 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
+}
+
+.card-header {
+    background-color: #17a2b8;
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.table {
+    border-radius: 15px;
+    overflow: hidden;
+}
+/* rgb(23,162,184) */
+
+.btn {
+    border-radius: 5px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+.admin-card-header{
+    
+    background-color: red; 
+}
+.card-footer {
+    border-top: none;
+    border-radius: 0 0 15px 15px;
+}
+.chart-container {
+    margin-top: 10px;
+}
