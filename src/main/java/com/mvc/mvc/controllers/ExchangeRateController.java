@@ -10,14 +10,14 @@ import com.mvc.mvc.entities.ControlExchangeRate;
 import org.springframework.ui.Model;
 import com.mvc.mvc.entities.ExchangeRate;
 import com.mvc.mvc.exceptions.ExchangeRateNotFoundException;
-import com.mvc.mvc.exceptions.ExchangeRateValueException;
+
 import com.mvc.mvc.services.IExchangeRateService;
 import com.mvc.mvc.services.ILogsService;
-import jakarta.validation.Valid;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,12 +30,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author HİDAYET
  */
 @Controller
-@RequestMapping("/exchangerates")
+@RequestMapping("/")
 public class ExchangeRateController {
 
-    
-
-    
     
     @Autowired
     private Admin admin;
@@ -47,18 +44,23 @@ public class ExchangeRateController {
     @Autowired   
     private ILogsService logService;
     
-    
     @GetMapping("/")
-    public String showHomePage() {
-        
-        String userName = admin.getUserName();
-    
-    // Konsola userName'i yazdır
-    System.out.println("UserName: " + userName);
-    System.out.println("activated: " + admin.isActivated());
-        
-       return "homePage";
+    public String getAllExchangeRate(
+            @RequestParam(value = "message", required = false) String message,
+            Model model
+            ) {
+       List<ExchangeRate> exchangeRates= service.getAllExchangeRate();
+       model.addAttribute("list", exchangeRates);
+       model.addAttribute("message", message);
+      
+       model.addAttribute("admin", admin.isActivated());
+       //model.addAttribute("adminActivated", admin.get);
+       
+       return "allExchangeRatesPage";
     }
+
+    
+ 
     
     @GetMapping("/adminLogin")
     public String showAdminLogin(Model model) {
@@ -71,7 +73,7 @@ public class ExchangeRateController {
     @GetMapping("/adminLogut")
     public String adminLogout() {
         service.handleAdminLogout();
-       return "redirect:getAllExchangeRates";
+       return "redirect:/";
     }
     
     @PostMapping("/handleAdminLogin")
@@ -118,7 +120,7 @@ public class ExchangeRateController {
        } catch (ExchangeRateNotFoundException e) {
            e.printStackTrace();
            attributes.addAttribute("message", e.getMessage());
-           page="redirect:getAllExchangeRates";
+           page="redirect:/";
        }
        return page; 
 
@@ -127,6 +129,36 @@ public class ExchangeRateController {
     @GetMapping("/result")
     public String resultCurrency(
             
+                        Model model,
+            RedirectAttributes attributes,
+            @RequestParam Long id,
+            @RequestParam("userInput") String userInput
+    
+    ) {
+        
+        String page = null; 
+
+       ExchangeRate exchangeRate = service.getExchangeRateById(id); // exchangeRate -->> exchangerates
+       Double result = service.getResult(exchangeRate.getExchangeRangeTL(), userInput);
+       model.addAttribute("exchangeRate", exchangeRate);
+       if (result != null) {
+        // result değeri null değilse aşağıdaki kodlar çalışır
+        model.addAttribute("resultValue", result);
+        
+        page = "resultPage";
+    } else {
+        
+        model.addAttribute("message", "Invalid number format.");
+        page = "converterPage"; // Hata sayfasına yönlendirme örneği
+    }
+       
+
+       return page; 
+
+    }
+    @PostMapping("/result")
+    public String resultCurrency2(
+            @ModelAttribute ExchangeRate ExchangeRate,
                         Model model,
             RedirectAttributes attributes,
             @RequestParam Long id,
@@ -178,21 +210,6 @@ public String saveExchangeRate(
 
 
 
-    @GetMapping("/getAllExchangeRates")
-    public String getAllExchangeRate(
-            @RequestParam(value = "message", required = false) String message,
-            Model model
-            ) {
-       List<ExchangeRate> exchangeRates= service.getAllExchangeRate();
-       model.addAttribute("list", exchangeRates);
-       model.addAttribute("message", message);
-      
-       model.addAttribute("admin", admin.isActivated());
-       //model.addAttribute("adminActivated", admin.get);
-       
-       return "allExchangeRatesPage";
-    }
-
     @GetMapping("/edit")
     public String getEditPage(
             Model model,
@@ -214,7 +231,7 @@ public String saveExchangeRate(
        } catch (ExchangeRateNotFoundException e) {
            e.printStackTrace();
            attributes.addAttribute("message", e.getMessage());
-           page="redirect:getAllExchangeRates";
+           page="redirect:/";
        }
        return page; 
     }
@@ -248,6 +265,6 @@ public String saveExchangeRate(
             e.printStackTrace();
             attributes.addAttribute("message", e.getMessage());
         }
-        return "redirect:getAllExchangeRates";
+        return "redirect:/";
     }
 }

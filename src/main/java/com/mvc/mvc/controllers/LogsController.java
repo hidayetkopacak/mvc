@@ -8,6 +8,7 @@ package com.mvc.mvc.controllers;
 import com.mvc.mvc.entities.ExchangeRate;
 import com.mvc.mvc.entities.Logs;
 import com.mvc.mvc.exceptions.ExchangeRateNotFoundException;
+import com.mvc.mvc.services.IExchangeRateService;
 import com.mvc.mvc.services.ILogsService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author HİDAYET
  */
 @Controller
-@RequestMapping("/exchangerates")
+@RequestMapping("/")
 public class LogsController {
 
     
     @Autowired   
     private ILogsService logService;
+    
+    @Autowired   
+    private IExchangeRateService service;
     
   @GetMapping("/chart")
     public String getChartPage(
@@ -39,8 +43,10 @@ public class LogsController {
        
 
        List<Logs> logList = logService.getLogsByExchangeRateId(id);
+       ExchangeRate exchangeRate = service.getExchangeRateById(id);
        model.addAttribute("logList", logList);// exchangeRate -->> exchangerates
-       System.out.println(logList);
+       
+       
 
        
        return "chart"; 

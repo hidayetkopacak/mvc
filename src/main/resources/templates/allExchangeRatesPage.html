@@ -43,20 +43,19 @@
                   <td th:text=${ob.currencyCode}></td>
                   <td th:text=${ob.exchangeRangeTL}></td>
                   <td>
-                     <a th:if="${admin}" th:href="@{/exchangerates/delete(id=${ob.id})}" class="btn btn-danger btn-sm">DELETE <i class="fa fa-trash-o" aria-hidden="true"></i></a>
-            <a th:if="${admin}" th:href="@{/exchangerates/edit(id=${ob.id})}" class="btn btn-warning btn-sm">EDIT <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                    <a th:href="@{/exchangerates/convert(id=${ob.id})}" class="btn btn-success btn-sm">CONVERT <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                    <a th:href="@{/exchangerates/chart(id=${ob.id})}" class="btn btn-info btn-sm" th:classappend="${admin} ? 'chart-button' : ''">CHART <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                     <a th:if="${admin}" th:href="@{/delete(id=${ob.id})}" class="btn btn-danger btn-sm">DELETE <i class="fa fa-trash-o" aria-hidden="true"></i></a>
+            <a th:if="${admin}" th:href="@{/edit(id=${ob.id})}" class="btn btn-warning btn-sm">EDIT <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                    <a th:href="@{/convert(id=${ob.id})}" class="btn btn-success btn-sm">CONVERT <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                    <a th:href="@{/chart(id=${ob.id})}" class="btn btn-info btn-sm" th:classappend="${admin} ? 'chart-button' : ''">CHART <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 
 
                   </td>
                 </tr>
               </tbody>
             </table>
-            <a th:if="${admin}" th:href="@{/exchangerates/register}" class="btn btn-success btn-sm">Add Currency <i class="fa fa-plus-square" aria-hidden="true"></i></a> 
-            <a th:href="@{/exchangerates/}" class="btn btn-primary btn-sm">Go to Home</a>
-            <a th:if="${not admin}" th:href="@{/exchangerates/adminLogin}" class="btn btn-success btn-sm">Admin Login</a>
-            <a th:if="${admin}" th:href="@{/exchangerates/adminLogut}" class="btn btn-danger btn-sm">Admin Logout</a>
+            <a th:if="${admin}" th:href="@{/register}" class="btn btn-success btn-sm">Add Currency <i class="fa fa-plus-square" aria-hidden="true"></i></a> 
+            <a th:if="${not admin}" th:href="@{/adminLogin}" class="btn btn-success btn-sm">Admin Login</a>
+            <a th:if="${admin}" th:href="@{/adminLogut}" class="btn btn-danger btn-sm">Admin Logout</a>
           </div>
           <div class="card-footer">
               <div th:if="${message!=null}"  class="card-footer bg-white text-info">

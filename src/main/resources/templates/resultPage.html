@@ -20,7 +20,7 @@
             <h3>Result</h3>
         </div>
         <div class="card-body">
-            <form th:action="@{/exchangerates/convert}" method="POST" id="exchangeRateForm" th:object="${exchangeRate}">
+            <form th:action="@{/convert}" method="POST" id="exchangeRateForm" th:object="${exchangeRate}">
                 <div class="row">
                     <div class="col-2">
                         <label for="id">ID</label>
@@ -62,7 +62,7 @@
                     <p><span th:text="${resultValue}"></span> TL</p>
                 </div> <br/>
                      
-			<a th:href="@{/exchangerates/getAllExchangeRates}" class= "btn btn-primary">Show All Currencies</a>
+			<a th:href="@{/}" class= "btn btn-primary">Show All Currencies</a>
                         <a href="javascript:history.back()" class="btn btn-secondary">Back</a> <!-- Back button -->
             </form>
         </div>
