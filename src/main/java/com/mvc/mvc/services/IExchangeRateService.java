@@ -4,8 +4,8 @@
  */
 package com.mvc.mvc.services;
 
-import com.mvc.mvc.entities.Admin;
-import com.mvc.mvc.entities.ControlExchangeRate;
+import com.mvc.mvc.custom.Admin;
+import com.mvc.mvc.custom.ControlExchangeRate;
 import com.mvc.mvc.entities.ExchangeRate;
 import java.util.List;
 import org.springframework.ui.Model;
@@ -25,7 +25,7 @@ public interface IExchangeRateService {
     public ExchangeRate getExchangeRateById(Long id);
     public Double getResult(Double amount, String userInput);
     public void deleteExchangeRateById(Long id);
-    public String updateExchangeRate(ExchangeRate exchangeRate);
+    //public String updateExchangeRate(ExchangeRate exchangeRate);
     public String updateExchangeRate2(ControlExchangeRate controlExchangeRate);
 
 }

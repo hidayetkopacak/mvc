@@ -4,8 +4,8 @@
  */
 package com.mvc.mvc.services.impl;
 
-import com.mvc.mvc.entities.Admin;
-import com.mvc.mvc.entities.ControlExchangeRate;
+import com.mvc.mvc.custom.Admin;
+import com.mvc.mvc.custom.ControlExchangeRate;
 import com.mvc.mvc.entities.ExchangeRate;
 import com.mvc.mvc.exceptions.ExchangeRateNotFoundException;
 import com.mvc.mvc.repos.ExchangeRateRepository;
@@ -87,7 +87,7 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
         exchangeRate.setCurrencyName(controlExchangeRate.getCurrencyName());
         exchangeRate.setCurrencyCode(controlExchangeRate.getCurrencyCode());
         exchangeRate.setExchangeRangeTL(exchangeRangeTL);
-            if (exchangeRangeTL>=0 ) {
+            if (exchangeRangeTL>0 ) {
        if (repo.existsByCurrencyName(exchangeRate.getCurrencyName()) || repo.existsByCurrencyCode(exchangeRate.getCurrencyCode())) {
 
            String message = "Currency '" + exchangeRate.getCurrencyName() + " " + exchangeRate.getCurrencyCode() + "' is already in the database.";
@@ -105,7 +105,7 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
 
     }
    else{
-       String message = "The number that you have entered can not be nagative.";
+       String message = "The number that you have entered can not be negative or zero.";
        return message;
    }
         
@@ -113,7 +113,7 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
         
         
     } catch (NumberFormatException e) {
-        return "Invalid exchange range value. Please enter a valid number.";
+        return "Invalid value. Please enter a valid number.";
     }
         
 
@@ -177,53 +177,6 @@ public Double getResult(Double amount, String userInput) {
        
     }
 
-    @Override
-    public String updateExchangeRate(ExchangeRate exchangeRate) {
-        
-        if (existingAdmin.isActivated()){
-        
-            ExchangeRate existingExchangeRate = getExchangeRateById(exchangeRate.getId());
-       
-       if (exchangeRate.getExchangeRangeTL()>=0 ){
-           if (repo.existsByCurrencyName(exchangeRate.getCurrencyName()) || repo.existsByCurrencyCode(exchangeRate.getCurrencyCode())) {
-               
-               System.out.println("Existing Currency Name: " + existingExchangeRate.getCurrencyName());
-               System.out.println("Currency Name: " + exchangeRate.getCurrencyName());
-               System.out.println(existingExchangeRate.getCurrencyName() == exchangeRate.getCurrencyName());
-               
-               // == kullanmama sebebi, java == ile referans bazında karşılaştırma yapar
-               if (existingExchangeRate.getCurrencyName().equals(exchangeRate.getCurrencyName()) && existingExchangeRate.getCurrencyCode().equals(exchangeRate.getCurrencyCode()) ) {
-                   repo.save(exchangeRate);
-                String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
-                return message;
-               }else {
-            
-                   String message = "Currency Name or Currency Code that you have changed is already in the database. Change both to update successfully.";
-                    return message;
-
-               
-               }
-               
-        }
-           else{
-                repo.save(exchangeRate);
-                String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
-                return message;
-       }
-       }
-       else{
-           String message = "The number that you have entered can not be nagative.";
-           return message;
-       }
-        
-        
-        }else{
-        
-            String message = "You dont have permission to do that.";
-           return message;
-        }
-        
-    }
     
         @Override
     public String updateExchangeRate2(ControlExchangeRate controlExchangeRate) {
@@ -232,6 +185,7 @@ public Double getResult(Double amount, String userInput) {
             
             double exchangeRangeTL;
         try {
+            // Validasyon
             exchangeRangeTL = Double.parseDouble(controlExchangeRate.getExchangeRangeTL());
             ExchangeRate exchangeRate = new ExchangeRate();
             exchangeRate.setId(controlExchangeRate.getId());
@@ -241,7 +195,7 @@ public Double getResult(Double amount, String userInput) {
             
             ExchangeRate existingExchangeRate = getExchangeRateById(exchangeRate.getId());
        
-       if (exchangeRate.getExchangeRangeTL()>=0 ){
+       if (exchangeRate.getExchangeRangeTL()>0 ){
            if (repo.existsByCurrencyName(exchangeRate.getCurrencyName()) || repo.existsByCurrencyCode(exchangeRate.getCurrencyCode())) {
                
                
@@ -281,12 +235,12 @@ public Double getResult(Double amount, String userInput) {
        }
        }
        else{
-           String message = "The number that you have entered can not be nagative.";
+           String message = "The number that you have entered can not be negative or zero.";
            return message;
        }
         }
         catch (NumberFormatException e) {
-        return "Invalid exchange range value. Please enter a valid number.";
+        return "Invalid value. Please enter a valid number.";
     }
         
        

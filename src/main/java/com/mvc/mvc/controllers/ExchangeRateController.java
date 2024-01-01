@@ -5,8 +5,8 @@
 package com.mvc.mvc.controllers;
 
 
-import com.mvc.mvc.entities.Admin;
-import com.mvc.mvc.entities.ControlExchangeRate;
+import com.mvc.mvc.custom.Admin;
+import com.mvc.mvc.custom.ControlExchangeRate;
 import org.springframework.ui.Model;
 import com.mvc.mvc.entities.ExchangeRate;
 import com.mvc.mvc.exceptions.ExchangeRateNotFoundException;
@@ -82,10 +82,7 @@ public class ExchangeRateController {
             @RequestParam("password") String password,
             Model model) {
 
-        // Now you can use 'userName' and 'password' in your logic.
-        // For example, you can validate the credentials, perform authentication, etc.
-        System.out.println("Input Admin Username: " + userName);
-        System.out.println("Input Admin password: " + password);
+        
         String message = service.handleAdminLogin(userName, password);
         // If login is successful, you can add a message to be displayed in the HTML.
         model.addAttribute("message", message);
@@ -156,37 +153,6 @@ public class ExchangeRateController {
        return page; 
 
     }
-    @PostMapping("/result")
-    public String resultCurrency2(
-            @ModelAttribute ExchangeRate ExchangeRate,
-                        Model model,
-            RedirectAttributes attributes,
-            @RequestParam Long id,
-            @RequestParam("userInput") String userInput
-    
-    ) {
-        
-        String page = null; 
-
-       ExchangeRate exchangeRate = service.getExchangeRateById(id); // exchangeRate -->> exchangerates
-       Double result = service.getResult(exchangeRate.getExchangeRangeTL(), userInput);
-       model.addAttribute("exchangeRate", exchangeRate);
-       if (result != null) {
-        // result değeri null değilse aşağıdaki kodlar çalışır
-        model.addAttribute("resultValue", result);
-        
-        page = "resultPage";
-    } else {
-        
-        model.addAttribute("message", "Invalid number format.");
-        page = "converterPage"; // Hata sayfasına yönlendirme örneği
-    }
-       
-
-       return page; 
-
-    }
-    
     
 
 @PostMapping("/save")
