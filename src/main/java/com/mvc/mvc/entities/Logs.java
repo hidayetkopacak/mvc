@@ -45,11 +45,6 @@ public class Logs {
     ExchangeRate exchangeRate;
    
     private Double exchangeRangeTL;
-
-
-   
-    
-    
     @Temporal(TemporalType.TIMESTAMP)
     Date createDate;
     

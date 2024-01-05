@@ -50,10 +50,7 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
             
     
     ) {
-        System.out.println("Input Admin Username: " + userName);
-        System.out.println("Input Admin Activated: " + password);
-        System.out.println("Existing Admin Username: " + existingAdmin.getUserName());
-        System.out.println("Existing Admin Activated: " + existingAdmin.isActivated());
+
         if (userName.equals(existingAdmin.getUserName()) && password.equals(existingAdmin.getPassword())){
             existingAdmin.setActivated(true);
             String message = "Login successfull.";
@@ -65,16 +62,144 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
             
         }
         
-        
-        
-        
-  
 
     }
     
     
     
+
+    
+
     @Override
+    public List<ExchangeRate> getAllExchangeRate() {
+       return repo.findAll();
+    }
+
+    
+    // Custom Exception
+    @Override
+    public ExchangeRate getExchangeRateById(Long id) {
+       Optional<ExchangeRate> opt = repo.findById(id);
+       if(opt.isPresent()) {
+           return opt.get();
+       } else {
+           throw new ExchangeRateNotFoundException("Currency with Id : "+id+" Not Found");
+       }
+    }
+    
+    @Override
+public Double getResult(Double amount, String userInput) {
+    try {
+        // Double.parseDouble() kullanımı
+        double userInputAsDouble = Double.parseDouble(userInput);
+        
+        // Dönüştürülen değeri kullanarak işlem yapabilirsiniz
+        return amount * userInputAsDouble;
+    } catch (NumberFormatException e) {
+        // Eğer dönüştürme hatası alınırsa burada uygun bir işlem yapabilirsiniz
+        System.err.println("Hata: Geçersiz sayı formatı");
+        
+        return null; // veya başka bir değer, işleme bağlı olarak
+    }
+}
+    
+
+
+    
+        @Override
+    public String updateExchangeRate2(ControlExchangeRate controlExchangeRate) {
+        
+        if (existingAdmin.isActivated()){
+            
+            double exchangeRangeTL;
+        try {
+            // Validasyon
+            exchangeRangeTL = Double.parseDouble(controlExchangeRate.getExchangeRangeTL());
+            ExchangeRate exchangeRate = new ExchangeRate();
+            exchangeRate.setId(controlExchangeRate.getId());
+            exchangeRate.setCurrencyName(controlExchangeRate.getCurrencyName());
+            exchangeRate.setCurrencyCode(controlExchangeRate.getCurrencyCode());
+            exchangeRate.setExchangeRangeTL(exchangeRangeTL);
+            
+            // eski değer ve yeni değer arasındaki karşılaştırmalar.
+            ExchangeRate existingExchangeRate = getExchangeRateById(exchangeRate.getId());
+       
+       if (exchangeRate.getExchangeRangeTL()>0 ){
+           if (repo.existsByCurrencyName(exchangeRate.getCurrencyName()) || repo.existsByCurrencyCode(exchangeRate.getCurrencyCode())) {
+               
+               
+               // == kullanmama sebebi, java == ile referans bazında karşılaştırma yapar
+               // burada sadece TL değeri mi değiştirilmiş kontrolü yapılıyor
+               if (existingExchangeRate.getCurrencyName().equals(exchangeRate.getCurrencyName()) && existingExchangeRate.getCurrencyCode().equals(exchangeRate.getCurrencyCode()) ) {
+                   repo.save(exchangeRate);
+                //String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
+                String message = "Record with Currency Name : '"+exchangeRate.getCurrencyName()+"' is saved successfully !";
+                logService.saveOneLog(exchangeRate);
+                return message;
+               }else {
+                   if (repo.existsByCurrencyNameAndIdNot(exchangeRate.getCurrencyName(),existingExchangeRate.getId())){
+                   
+                        String message = "Currency Name '" + exchangeRate.getCurrencyName()+"' is already exists.";
+                    return message;
+                   }else if (repo.existsByCurrencyCodeAndIdNot(exchangeRate.getCurrencyCode(),existingExchangeRate.getId())){
+                   
+                        String message = "Currency Code '" + exchangeRate.getCurrencyCode()+"' is already exists.";
+                    return message;
+                   }
+                   else{
+                        repo.save(exchangeRate);
+                        
+                        //String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
+                        String message = "Record with Currency Name : '"+exchangeRate.getCurrencyName()+"' is saved successfully !";
+                        logService.saveOneLog(exchangeRate);
+                        return message;
+                   }
+            
+              
+               }
+               
+        }
+           else{
+                repo.save(exchangeRate);
+                //String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
+                String message = "Record with Currency Name : '"+exchangeRate.getCurrencyName()+"' is saved successfully !";
+                logService.saveOneLog(exchangeRate);
+                return message;
+       }
+       }
+       else{
+           String message = "The number that you have entered can not be negative or zero.";
+           return message;
+       }
+        }
+        catch (NumberFormatException e) {
+        return "Invalid value. Please enter a valid number.";
+    }
+        
+       
+    }else {
+        return "You dont have permission to do that.";
+        
+        }
+            
+            
+        }
+    
+    
+    
+        @Override
+    public void deleteExchangeRateById(Long id) {
+        if (existingAdmin.isActivated()){
+            repo.delete(getExchangeRateById(id)); 
+        }
+       
+    }
+
+    
+    
+    
+    
+        @Override
     public String saveExchangeRate(
             ControlExchangeRate controlExchangeRate
     ) {
@@ -87,7 +212,7 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
         exchangeRate.setCurrencyName(controlExchangeRate.getCurrencyName());
         exchangeRate.setCurrencyCode(controlExchangeRate.getCurrencyCode());
         exchangeRate.setExchangeRangeTL(exchangeRangeTL);
-            if (exchangeRangeTL>0 ) {
+            if (exchangeRangeTL>0) {
        if (repo.existsByCurrencyName(exchangeRate.getCurrencyName()) || repo.existsByCurrencyCode(exchangeRate.getCurrencyCode())) {
 
            String message = "Currency '" + exchangeRate.getCurrencyName() + " " + exchangeRate.getCurrencyCode() + "' is already in the database.";
@@ -96,7 +221,9 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
        else{
        
         repo.save(exchangeRate);
-        String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
+        //String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
+        String message = "Record with Currency Name : '"+exchangeRate.getCurrencyName()+"' is saved successfully !";
+        
         logService.saveOneLog(exchangeRate);
         return message;
 
@@ -124,133 +251,10 @@ public class ExchangeRateServiceImpl implements IExchangeRateService {
         
             return "You don't have permisson to do that.";
         }
-        
-        
-
-
-        
-        
-        
-        
        
    
     }
     
-    
-
-    @Override
-    public List<ExchangeRate> getAllExchangeRate() {
-       return repo.findAll();
-    }
-
-    @Override
-    public ExchangeRate getExchangeRateById(Long id) {
-       Optional<ExchangeRate> opt = repo.findById(id);
-       if(opt.isPresent()) {
-           return opt.get();
-       } else {
-           throw new ExchangeRateNotFoundException("Currency with Id : "+id+" Not Found");
-       }
-    }
-    
-    @Override
-public Double getResult(Double amount, String userInput) {
-    try {
-        // Double.parseDouble() kullanımı
-        double userInputAsDouble = Double.parseDouble(userInput);
-        
-        // Dönüştürülen değeri kullanarak işlem yapabilirsiniz
-        return amount * userInputAsDouble;
-    } catch (NumberFormatException e) {
-        // Eğer dönüştürme hatası alınırsa burada uygun bir işlem yapabilirsiniz
-        System.err.println("Hata: Geçersiz sayı formatı");
-        
-        return null; // veya başka bir değer, işleme bağlı olarak
-    }
-}
-    
-    @Override
-    public void deleteExchangeRateById(Long id) {
-        if (existingAdmin.isActivated()){
-            repo.delete(getExchangeRateById(id)); 
-        }
-       
-    }
-
-    
-        @Override
-    public String updateExchangeRate2(ControlExchangeRate controlExchangeRate) {
-        
-        if (existingAdmin.isActivated()){
-            
-            double exchangeRangeTL;
-        try {
-            // Validasyon
-            exchangeRangeTL = Double.parseDouble(controlExchangeRate.getExchangeRangeTL());
-            ExchangeRate exchangeRate = new ExchangeRate();
-            exchangeRate.setId(controlExchangeRate.getId());
-            exchangeRate.setCurrencyName(controlExchangeRate.getCurrencyName());
-            exchangeRate.setCurrencyCode(controlExchangeRate.getCurrencyCode());
-            exchangeRate.setExchangeRangeTL(exchangeRangeTL);
-            
-            ExchangeRate existingExchangeRate = getExchangeRateById(exchangeRate.getId());
-       
-       if (exchangeRate.getExchangeRangeTL()>0 ){
-           if (repo.existsByCurrencyName(exchangeRate.getCurrencyName()) || repo.existsByCurrencyCode(exchangeRate.getCurrencyCode())) {
-               
-               
-               // == kullanmama sebebi, java == ile referans bazında karşılaştırma yapar
-               if (existingExchangeRate.getCurrencyName().equals(exchangeRate.getCurrencyName()) && existingExchangeRate.getCurrencyCode().equals(exchangeRate.getCurrencyCode()) ) {
-                   repo.save(exchangeRate);
-                String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
-                logService.saveOneLog(exchangeRate);
-                return message;
-               }else {
-                   if (repo.existsByCurrencyNameAndIdNot(exchangeRate.getCurrencyName(),existingExchangeRate.getId())){
-                   
-                        String message = "Currency Name '" + exchangeRate.getCurrencyName()+"' has alrady exist.";
-                    return message;
-                   }else if (repo.existsByCurrencyCodeAndIdNot(exchangeRate.getCurrencyCode(),existingExchangeRate.getId())){
-                   
-                        String message = "Currency Code '" + exchangeRate.getCurrencyCode()+"' has alrady exist.";
-                    return message;
-                   }
-                   else{
-                        repo.save(exchangeRate);
-                        
-                        String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
-                        logService.saveOneLog(exchangeRate);
-                        return message;
-                   }
-            
-              
-               }
-               
-        }
-           else{
-                repo.save(exchangeRate);
-                String message = "Record with id : '"+exchangeRate.getId()+"' is saved successfully !";
-                logService.saveOneLog(exchangeRate);
-                return message;
-       }
-       }
-       else{
-           String message = "The number that you have entered can not be negative or zero.";
-           return message;
-       }
-        }
-        catch (NumberFormatException e) {
-        return "Invalid value. Please enter a valid number.";
-    }
-        
-       
-    }else {
-        return "You dont have permission to do that.";
-        
-        }
-            
-            
-        }
         
     
 }

@@ -12,8 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author HİDAYET
  */
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long> {
+    //save kısmı için
     boolean existsByCurrencyName(String currencyName);
     boolean existsByCurrencyCode(String currencyCode);
+    
+    //update kısmı için
         // Belirli bir ID hariç diğer verilerde aynı currencyName'e sahip olan kayıtları kontrol et
     boolean existsByCurrencyNameAndIdNot(String currencyName, Long id);
 

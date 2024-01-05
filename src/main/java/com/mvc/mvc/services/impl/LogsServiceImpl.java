@@ -28,7 +28,7 @@ public class LogsServiceImpl implements ILogsService {
     @Override
     public void saveOneLog(ExchangeRate exchangeRate){
         if (exchangeRate.getId() != null) {
-            System.out.println("NULL DEGIL");
+            
         // If not persisted, save it first
         Logs log = new Logs();
         log.setExchangeRate(exchangeRate);
@@ -37,7 +37,7 @@ public class LogsServiceImpl implements ILogsService {
         repo.save(log);
     }else {
         
-        System.out.println("NULLDAYIZ");
+        System.out.println("NULL VALUE");
         }
 
     }

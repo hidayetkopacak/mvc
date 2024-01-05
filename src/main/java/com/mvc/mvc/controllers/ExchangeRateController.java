@@ -44,20 +44,7 @@ public class ExchangeRateController {
     @Autowired   
     private ILogsService logService;
     
-    @GetMapping("/")
-    public String getAllExchangeRate(
-            @RequestParam(value = "message", required = false) String message,
-            Model model
-            ) {
-       List<ExchangeRate> exchangeRates= service.getAllExchangeRate();
-       model.addAttribute("list", exchangeRates);
-       model.addAttribute("message", message);
-      
-       model.addAttribute("admin", admin.isActivated());
-       //model.addAttribute("adminActivated", admin.get);
-       
-       return "allExchangeRatesPage";
-    }
+    
 
     
  
@@ -93,11 +80,20 @@ public class ExchangeRateController {
         
     }
 
-    @GetMapping("/register")
-    public String showRegistration() {
-       return "registerExchangeRatePage";
+    @GetMapping("/")
+    public String getAllExchangeRate(
+            @RequestParam(value = "message", required = false) String message,
+            Model model
+            ) {
+       List<ExchangeRate> exchangeRates= service.getAllExchangeRate();
+       model.addAttribute("list", exchangeRates);
+       model.addAttribute("message", message);
+      
+       model.addAttribute("admin", admin.isActivated());
+       //model.addAttribute("adminActivated", admin.get);
+       
+       return "allExchangeRatesPage";
     }
-    
     @GetMapping("/convert")
     public String convertCurrency(
             
@@ -135,7 +131,7 @@ public class ExchangeRateController {
         
         String page = null; 
 
-       ExchangeRate exchangeRate = service.getExchangeRateById(id); // exchangeRate -->> exchangerates
+       ExchangeRate exchangeRate = service.getExchangeRateById(id); 
        Double result = service.getResult(exchangeRate.getExchangeRangeTL(), userInput);
        model.addAttribute("exchangeRate", exchangeRate);
        if (result != null) {
@@ -146,33 +142,20 @@ public class ExchangeRateController {
     } else {
         
         model.addAttribute("message", "Invalid number format.");
-        page = "converterPage"; // Hata sayfasına yönlendirme örneği
+        page = "converterPage";
     }
        
 
        return page; 
 
     }
-    
 
-@PostMapping("/save")
-public String saveExchangeRate(
-        @ModelAttribute ControlExchangeRate controlExchangeRate,
-        Model model,
-        RedirectAttributes attributes
-) {
-    
-        
-        String message = service.saveExchangeRate(controlExchangeRate);
-        //logService.saveOneLog(exchangeRate);
-
-        model.addAttribute("message", message);
-
-        return "registerExchangeRatePage";
-
-         
-    
+@GetMapping("/register")
+public String showRegistration() {
+   return "registerExchangeRatePage";
 }
+        
+
 
 
 
@@ -218,19 +201,46 @@ public String saveExchangeRate(
    
        
     }
-
-    @GetMapping("/delete")
+    
+        @GetMapping("/delete")
     public String deleteExchangeRate(
             @RequestParam Long id,
             RedirectAttributes attributes
             ) {
         try {
+        
+        ExchangeRate exchangeRate = service.getExchangeRateById(id);
         service.deleteExchangeRateById(id);
-        attributes.addAttribute("message", "ExchangeRate with Id : '"+id+"' is removed successfully!");
+        
+        attributes.addAttribute("message", "ExchangeRate with Currency Name : '"+exchangeRate.getCurrencyName()+"' is removed successfully!");
         } catch (ExchangeRateNotFoundException e) {
             e.printStackTrace();
             attributes.addAttribute("message", e.getMessage());
         }
         return "redirect:/";
     }
+    
+    
+    
+    @PostMapping("/save")
+public String saveExchangeRate(
+        @ModelAttribute ControlExchangeRate controlExchangeRate,
+        Model model
+        //RedirectAttributes attributes
+) {
+    
+        
+        String message = service.saveExchangeRate(controlExchangeRate);
+        //logService.saveOneLog(exchangeRate);
+
+        model.addAttribute("message", message);
+
+        return "registerExchangeRatePage";
+
+         
+    
+}
+
+
+
 }

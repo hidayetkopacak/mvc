@@ -43,7 +43,6 @@ public class LogsController {
        
 
        List<Logs> logList = logService.getLogsByExchangeRateId(id);
-       ExchangeRate exchangeRate = service.getExchangeRateById(id);
        model.addAttribute("logList", logList);// exchangeRate -->> exchangerates
        
        
